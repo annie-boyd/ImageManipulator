@@ -1,2 +1,15 @@
 # ImageManipulator
-Image Manipulator is an interactive app that applies a set of custom image-processing algorithms, built in C++ and ported to Typescript to user-uploaded images, including channel manipulation, horizontal mirroring, recursive fractal generation, and color-based region segmentation. 
+Image Manipulator is a browser-based image editor written in TypeScript. You upload an image, pick an effect, and download the result as a PNG. Everything runs client-side using the Canvas API, with no backend and no image-processing libraries.
+
+## Features (in progress)
+- Brightness and saturation adjustment
+- Vertical flip
+- Resize (nearest-neighbor)
+- Sierpinski carpet fractal
+- Color-based region segmentation
+
+## Running locally
+```
+npm install
+npm run dev
+```
