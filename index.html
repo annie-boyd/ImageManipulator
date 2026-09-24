@@ -7,7 +7,68 @@
     <title>Image Manipulator</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <h1>Image Manipulator</h1>
+
+      <input type="file" id="file-input" accept="image/*" />
+
+      <select id="operation">
+        <option value="flip">Flip</option>
+        <option value="resize">Resize</option>
+        <option value="adjust">Adjust</option>
+        <option value="carpet">Carpet</option>
+        <option value="segment">Segment</option>
+      </select>
+
+      <!-- controls for each mode (flip has none); all hidden until selected -->
+      <div id="resize-controls" hidden>
+        <label>
+          Rows
+          <input type="number" id="resize-rows" min="1" value="200" />
+        </label>
+        <label>
+          Cols
+          <input type="number" id="resize-cols" min="1" value="200" />
+        </label>
+      </div>
+
+      <div id="adjust-controls" hidden>
+        <label>
+          Brightness
+          <input type="range" id="adjust-brightness" min="-100" max="100" step="1" value="0" />
+        </label>
+        <label>
+          Saturation
+          <input type="range" id="adjust-saturation" min="0" max="2" step="0.1" value="1" />
+        </label>
+      </div>
+
+      <div id="carpet-controls" hidden>
+        <label>
+          Depth
+          <input type="number" id="carpet-depth" min="1" max="5" value="3" />
+        </label>
+        <label>
+          Center color
+          <input type="color" id="carpet-color" value="#000000" />
+        </label>
+      </div>
+
+      <div id="segment-controls" hidden>
+        <label>
+          Threshold
+          <input type="range" id="segment-threshold" min="0" max="300" step="1" value="100" />
+        </label>
+        <span id="segment-count"></span>
+      </div>
+
+      <button id="run-button">Run</button>
+
+      <canvas id="source-canvas"></canvas>
+      <canvas id="result-canvas"></canvas>
+
+      <a id="download-link" download="result.png" hidden>Download your new image!</a>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
