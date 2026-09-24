@@ -16,11 +16,18 @@ const runButton = document.querySelector("#run-button") as HTMLButtonElement;
 const sourceCanvas = document.querySelector("#source-canvas") as HTMLCanvasElement;
 const resultCanvas = document.querySelector("#result-canvas") as HTMLCanvasElement;
 const downloadLink = document.querySelector("#download-link") as HTMLAnchorElement;
+const useResultButton = document.querySelector("#use-result-button") as HTMLButtonElement;
+const resetButton = document.querySelector("#reset-button") as HTMLButtonElement;
 const resizeRowsInput = document.querySelector("#resize-rows") as HTMLInputElement;
 const resizeColsInput = document.querySelector("#resize-cols") as HTMLInputElement;
+const brightnessInput = document.querySelector("#adjust-brightness") as HTMLInputElement;
+const saturationInput = document.querySelector("#adjust-saturation") as HTMLInputElement;
 
-// State for the current source image
+// State: the uploaded image (never changes until a new upload), the image the
+// next op runs on, and the most recent result
+let original: PixelImage | null = null;
 let source: PixelImage | null = null;
+let latestResult: PixelImage | null = null;
 
 // Handle file input changes and load the image into the source canvas and state
 fileInput.addEventListener("change", async () => {
@@ -35,7 +42,9 @@ fileInput.addEventListener("change", async () => {
   if (ctx) {
     ctx.drawImage(bitmap, 0, 0);
     const imageData = ctx.getImageData(0, 0, bitmap.width, bitmap.height);
-    source = new PixelImage(imageData);
+    original = new PixelImage(imageData);
+    source = original;
+    resetButton.hidden = true;
   }
 });
 
@@ -66,10 +75,16 @@ runButton.addEventListener("click", () => {
     if (!Number.isInteger(rows) || rows < 1 || !Number.isInteger(cols) || cols < 1) return;
 
     result = resizeNearest(source, rows, cols);
+  } else if (operationSelect.value === "adjust") {
+    const brightness = Number(brightnessInput.value);
+    const saturation = Number(saturationInput.value);
+    result = adjustColor(source, brightness, saturation);
   }
 
   if (result) {
     drawToCanvas(result, resultCanvas);
+    latestResult = result;
+    useResultButton.hidden = false;
 
     // turn the result into a PNG and point the download link at it
     resultCanvas.toBlob((blob) => {
@@ -80,6 +95,23 @@ runButton.addEventListener("click", () => {
   }
 });
 
+// Make the latest result the new source so the next op builds on it.
+// Safe to share the object because ops never modify their input.
+useResultButton.addEventListener("click", () => {
+  if (!latestResult) return;
+  source = latestResult;
+  drawToCanvas(source, sourceCanvas);
+  resetButton.hidden = false;
+});
+
+// Go back to the uploaded image
+resetButton.addEventListener("click", () => {
+  if (!original) return;
+  source = original;
+  drawToCanvas(source, sourceCanvas);
+  resetButton.hidden = true;
+});
+
 // Draw a PixelImage onto a canvas element
 function drawToCanvas(img: PixelImage, canvas: HTMLCanvasElement): void {
   canvas.width = img.cols;
@@ -87,5 +119,5 @@ function drawToCanvas(img: PixelImage, canvas: HTMLCanvasElement): void {
   const ctx = canvas.getContext("2d");
   if (ctx) {
     ctx.putImageData(img.toImageData(), 0, 0);
-
-}};
+  }
+}

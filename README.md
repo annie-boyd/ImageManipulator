@@ -6,9 +6,9 @@ Image Manipulator is a browser-based image editor written in TypeScript. You upl
 ## Features (completed)
 - Vertical flip
 - Resize (nearest-neighbor)
+- Brightness and saturation adjustment
 
 ## Features (in progress)
-- Brightness and saturation adjustment
 - Sierpinski carpet fractal
 - Color-based region segmentation
 
